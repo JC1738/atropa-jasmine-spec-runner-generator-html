@@ -10,25 +10,28 @@
               href="{{{jasmineStandaloneWebDirectory}}}jasmine.css">
         <script type="text/javascript"
               src="{{{jasmineStandaloneWebDirectory}}}jasmine.js">
-</script>
+        </script>
         <script type="text/javascript"
               src="{{{jasmineStandaloneWebDirectory}}}jasmine-html.js">
-</script>
+        </script>
+        <script type="text/javascript"
+              src="{{{jasmineStandaloneWebDirectory}}}jasmine.teamcity_reporter.js">
+        </script>        
 
 <!-- include source files here... -->
 
 {{#sourceFiles}}
-        <script type="text/javascript"
-              src="{{{.}}}" data-cover="">
-</script>
+        <script type="text/javascript" src="{{{.}}}"></script>
 {{/sourceFiles}}
+
+{{#sourceFilesCover}}
+        <script type="text/javascript" src="{{{.}}}" data-cover=""></script>
+{{/sourceFilesCover}}
 
 <!-- include spec files here... -->
 
 {{#testSpecs}}
-        <script type="text/javascript"
-              src="{{{.}}}">
-</script>
+        <script type="text/javascript" src="{{{.}}}"></script>
 {{/testSpecs}}
 
 
@@ -38,8 +41,10 @@
                 jasmineEnv.updateInterval = 1000;
 
                 var htmlReporter = new jasmine.HtmlReporter();
+                var teamcityReporter = new jasmine.TeamcityReporter();
 
                 jasmineEnv.addReporter(htmlReporter);
+                jasmineEnv.addReporter(teamcityReporter);
 
                 jasmineEnv.specFilter = function (spec) {
                     return htmlReporter.specFilter(spec);

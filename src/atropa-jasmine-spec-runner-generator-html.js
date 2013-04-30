@@ -89,6 +89,14 @@ var JasmineSpecRunnerGenerator = function JasmineSpecRunnerGenerator(
      */
     this.sourceFiles = [];
     /**
+     * An array of URL's relative to your web root which point to files to test.
+     * @type Array
+     * @fieldOf JasmineSpecRunnerGenerator#
+     * @default []
+     * @see JasmineSpecRunnerGenerator#addSourcesDataCover
+     */
+    this.sourceFilesDataCover = [];
+    /**
      * An array of URL's relative to your web root which point to test
      *  specs / fixtures.
      * @type Array
@@ -127,6 +135,22 @@ var JasmineSpecRunnerGenerator = function JasmineSpecRunnerGenerator(
         });
         return sources;
     }
+
+    this.addSource = function(item) {
+        var fileArray = [];
+        fileArray.push(item);
+        my.sourceFiles = my.sourceFiles.concat(fileArray);
+        console.log('in addSource new length = ' + my.sourceFiles.length);
+        return my.sourceFiles;
+    };
+
+    this.addSourceDataCover = function(item) {
+        var fileArray = [];
+        fileArray.push(item);
+        my.sourceFilesDataCover = my.sourceFilesDataCover.concat(fileArray);
+        return my.sourceFilesDataCover;
+    };
+
     /**
      * Renders the mustache template.
      * @private
@@ -146,6 +170,7 @@ var JasmineSpecRunnerGenerator = function JasmineSpecRunnerGenerator(
                 'pageTitle'                    : my.pageTitle,
                 'jasmineStandaloneWebDirectory': my.jasmineDirectory,
                 'sourceFiles'                  : my.sourceFiles,
+                'sourceFilesCover'             : my.sourceFilesDataCover,
                 'testSpecs'                    : my.specs
             };
         }
@@ -165,6 +190,22 @@ var JasmineSpecRunnerGenerator = function JasmineSpecRunnerGenerator(
         var sources = generateSrcUrls(fsDir, webDir);
         my.sourceFiles = my.sourceFiles.concat(sources);
         return my.sourceFiles;
+    };
+    /**
+     * Adds source files to test that you want to cover with blankejs.
+     *  This will read the filenames located in fsDir
+     *  and build script src paths relative to your web root.
+     * @methodOf JasmineSpecRunnerGenerator#
+     * @param {String} fsDir The location of source files in the filesystem.
+     * @param {String} webDir The location of source files relative to your web
+     *  root.
+     * @returns {Array} Returns the current sourceFilesDataCover array.
+     * @see JasmineSpecRunnerGenerator#sourceFilesDataCover
+     */
+    this.addSourcesDataCover = function (fsDir, webDir) {
+        var sources = generateSrcUrls(fsDir, webDir);
+        my.sourceFilesDataCover = my.sourceFilesDataCover.concat(sources);
+        return my.sourceFilesDataCover;
     };
     /**
      * Adds test specs. This will read the filenames located in fsDir and build
@@ -205,6 +246,9 @@ var JasmineSpecRunnerGenerator = function JasmineSpecRunnerGenerator(
      * @see JasmineSpecRunnerGenerator#generate
      */
     this.generateFile = function (callback) {
+
+        console.log('sourceFiles = ' + my.sourceFiles.length);
+        console.log('sourceFilesDataCover ' + my.sourceFilesDataCover.length);
         var outputFile = path.normalize(my.outputFile);
         
         function cb (err) {
